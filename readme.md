@@ -2,9 +2,9 @@
 ## Hệ thống đăng ký phòng họp: Mô hình hoá sử dụng Event-B & Lập trình sử dụng RESTful APIs
 
 ### Cấu trúc thư mục:
-report: chứa file báo cáo học phần: mô tả bài toán và cách tiếp cận
-event-b: chứa các file định nghĩa các context và machine
-postman: chứa Postman collection để thực hiện test các apis 
+- report: chứa file báo cáo học phần: mô tả bài toán và cách tiếp cận
+- event-b: chứa các file định nghĩa các context và machine
+- postman: chứa Postman collection để thực hiện test các apis 
 
 ### Hướng dẫn cài đặt:
 1. Rodin 
