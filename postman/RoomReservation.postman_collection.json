@@ -1,0 +1,424 @@
+{
+	"info": {
+		"_postman_id": "e051d726-d18c-4a95-a130-f467e462ac10",
+		"name": "RoomReservation",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25102462"
+	},
+	"item": [
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "get users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Giảng viên 1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/users/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Giảng viên 2\", \n    \"role\": \"Staff\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "room",
+			"item": [
+				{
+					"name": "create room",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"R3\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/rooms",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"rooms"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deactivate room",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"roomId\": \"6552d8ad5099475ccebc9ccd\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/rooms/deactivate",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"rooms",
+								"deactivate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "activate room",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"roomId\": \"6552d8ad5099475ccebc9ccd\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/rooms/activate",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"rooms",
+								"activate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get rooms",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/rooms",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"rooms"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "reservation",
+			"item": [
+				{
+					"name": "create reservaion",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"roomId\": \"6552d8ad5099475ccebc9ccd\",\n    \"startTime\": 1599905898555,\n    \"endTime\": 1599905898888\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/reservations",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"reservations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "accept",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"reservationId\": \"6552d9165099475ccebc9ccf\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/reservations/accept",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"reservations",
+								"accept"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get reservations",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/reservations",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"reservations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "decline",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"reservationId\": \"6552822f179d9586f8c8073e\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/reservations/decline",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"reservations",
+								"decline"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "reserve",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"reservationId\": \"6552d9165099475ccebc9ccf\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/reservations/reserve",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"reservations",
+								"reserve"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deny",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"reservationId\": \"6552d9165099475ccebc9ccf\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/reservations/deny",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"reservations",
+								"deny"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.request.headers.add({ key: 'authorization', value: pm.variables.get(\"token\") });"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "director token ",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "admin token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "secretary token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "staff token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
