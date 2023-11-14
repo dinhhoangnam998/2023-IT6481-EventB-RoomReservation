@@ -1,0 +1,42 @@
+machine m1 refines m0 sees ctx0 ctx1
+variables users user_role rooms reservations inactive_rooms
+
+invariants
+  @invr1 inactive_rooms ⊆ rooms
+  @invr2 ∀r·r ∈ reservations ∧ f_state(r) = Reserved ∧ f_endtime(r) > k_current_timestamp ⇒ f_room(r) ∉ inactive_rooms
+
+events
+  event INITIALISATION extends INITIALISATION
+    then
+      @initr1 inactive_rooms ≔ ∅
+  end
+
+  event deactive_room
+    any room
+    where
+      @grd1 room ∈ rooms
+      @grd2 room ∉ inactive_rooms
+      @grd3 ∀r·r ∈ reservations ∧ f_state(r) = Reserved ∧ f_endtime(r) > k_current_timestamp ⇒ f_room(r) ≠  room
+    then
+     @act1 inactive_rooms ≔ inactive_rooms ∪ {room}
+  end
+
+  event active_room
+    any room
+    where
+      @grd1 room ∈ inactive_rooms
+    then
+      @act1 inactive_rooms ≔ inactive_rooms ∖ {room}
+  end
+
+  event create_reservation extends create_reservation
+    where
+      @grdr1 room ∉  inactive_rooms
+  end
+
+  event reserve extends reserve
+    where
+      @grdr1 f_room(reservation) ∉ inactive_rooms
+  end
+
+end

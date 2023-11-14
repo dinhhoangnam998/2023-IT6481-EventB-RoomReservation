@@ -1,0 +1,24 @@
+context ctx0
+
+sets USERS ROLES ROOMS STATE RESERVATIONS
+
+constants k_root Admin Director Secretary Staff
+          Requested Accepted Declined Reserved Denied
+          f_id f_room f_starttime f_endtime f_state
+
+axioms
+  @axm9 finite(RESERVATIONS)
+  @axm10 finite(ROOMS)
+  @axm11 finite(USERS)
+
+  @axm1 k_root ∈ USERS
+  @axm2 partition(ROLES, {Admin}, {Director}, {Secretary}, {Staff})
+  @axm3 partition(STATE, {Requested}, {Accepted}, {Declined}, {Reserved}, {Denied})
+
+  @axm4 f_id ∈ RESERVATIONS → ℕ
+  @axm5 f_room ∈ RESERVATIONS → ROOMS
+  @axm6 f_starttime ∈ RESERVATIONS → ℕ1
+  @axm7 f_endtime ∈ RESERVATIONS → ℕ1
+  @axm8 f_state ∈ RESERVATIONS → STATE
+
+end

@@ -1,0 +1,113 @@
+machine m0 sees ctx0
+
+variables users user_role rooms rids f_room f_starttime f_endtime f_state
+
+invariants
+  @inv1 users ⊆ USERS
+  @inv2 user_role ∈ users → ROLES
+  @inv3 rooms ⊆ ROOMS
+  @inv4 rids ⊆ ℕ1
+  @inv5 f_room ∈ rids → rooms
+  @inv6 f_starttime ∈ rids → ℕ1
+  @inv7 f_endtime ∈ rids → ℕ1
+  @inv8 f_state ∈ rids → STATES
+  @inv9 ∀ rid· rid ∈ rids ⇒ f_starttime(rid) < f_endtime(rid)
+  @inv10 ∀rid1,rid2 · rid1 ∈ rids ∧ rid2 ∈ rids ∧ rid1 ≠ rid2 ∧ f_state(rid1) = Reserved ∧ f_state(rid2) = Reserved
+         ⇒ f_starttime(rid1) > f_endtime(rid2) ∨ f_endtime(rid1) < f_starttime(rid2)
+
+
+events
+  event INITIALISATION
+    then
+      @init1 users ≔ {k_root}
+      @init2 user_role ≔ {k_root ↦ Admin}
+      @init3 rooms ≔ ∅
+      @init4 rids ≔ ∅
+      @init5 f_room ≔ ∅
+      @init6 f_starttime ≔ ∅
+      @init7 f_endtime ≔ ∅
+      @init8 f_state ≔ ∅
+  end
+
+  event add_user
+    any caller new_user role
+    where
+      @grd1 caller ∈ users ∧ user_role(caller) = Admin
+      @grd2 new_user ∈ USERS ∖ users
+      @grd3 role ∈ ROLES
+    then
+      @act1 users ≔ users ∪ {new_user}
+      @act2 user_role(new_user) ≔ role
+  end
+
+  event add_room
+    any caller new_room
+    where
+      @grd1 caller ∈ dom(user_role ▷ {Admin})
+      @grd2 new_room ∈ ROOMS ∖ rooms
+    then
+      @act1 rooms ≔ rooms ∪ {new_room}
+  end
+
+  event create_reservation
+    any caller rid starttime endtime room
+    where
+      @grd1 caller ∈ users
+      @grd2 rid ∈ ℕ1
+      @grd3 starttime ∈ ℕ1
+      @grd4 endtime ∈ ℕ1
+      @grd5 room ∈ rooms
+      @grd6 rid ∉ rids
+      @grd7 starttime < endtime
+      // @grd8 state = Requested
+    then
+	  @act1 rids ≔ rids ∪ {rid}
+	  @act2 f_room(rid) ≔ room
+	  @act3 f_starttime(rid) ≔ starttime
+	  @act4 f_endtime(rid) ≔ endtime
+	  @act5 f_state(rid) ≔ Requested
+  end
+
+  event accept_reservation
+  any caller rid
+  where
+    @grd1 caller ∈ users ∧ user_role(caller) = Director
+    @grd2 rid ∈ rids
+    @grd3 f_state(rid) = Requested
+  then
+    @act1 f_state(rid) ≔  Accepted
+  end
+
+  event decline_reservation
+    any caller rid
+    where
+      @grd1 caller ∈ users ∧ user_role(caller) = Director
+      @grd2 rid ∈ rids
+      @grd3 f_state(rid) = Requested
+    then
+      @act1 f_state(rid) ≔ Declined
+  end
+
+  event reserve
+    any caller rid
+    where
+      @grd1 caller ∈ users ∧ user_role(caller) = Secretary
+      @grd2 rid ∈ rids
+      @grd3 f_state(rid) = Accepted
+      @grd4 ∀rid1 · rid1 ∈ rids ∧ f_state(rid1) = Reserved
+            ⇒ f_endtime(rid) < f_starttime(rid1) ∨ f_starttime(rid) > f_endtime(rid1)
+    then
+      @act1 f_state(rid) ≔ Reserved
+  end
+
+  event deny
+    any caller rid
+    where
+      @grd1 caller ∈ users ∧ user_role(caller) = Secretary
+      @grd2 rid ∈ rids
+      @grd3 f_state(rid) = Accepted
+    then
+      @act1 f_state(rid) ≔ Denied
+  end
+
+end

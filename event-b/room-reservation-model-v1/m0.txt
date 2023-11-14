@@ -1,0 +1,123 @@
+machine m0 sees ctx0
+
+variables users user_role rooms reservations
+
+invariants
+  @inv1 users ⊆ USERS
+  @inv2 user_role ∈ users → ROLES
+  @inv3 rooms ⊆ ROOMS
+  @inv4 reservations ⊆ RESERVATIONS
+  @inv5 ∀r·r ∈ reservations ⇒ f_starttime(r) < f_endtime(r)
+  // @inv6
+  // @inv6 ∀r1,r2 · r1 ∈ reservations ∧ r2 ∈ reservations ∧ f_starttime(r1) < f_starttime(r2) ⇒ f_endtime(r1) < f_starttime(r2)
+  // @inv7 ∀r1,r2 · r1 ∈ reservations ∧ r2 ∈ reservations ∧ f_starttime(r1) > f_starttime(r2) ⇒ f_starttime(r1) > f_endtime(r2)
+   @inv6 ∀r1,r2 · r1 ∈ reservations ∧ r2 ∈ reservations ∧ f_id(r1) ≠ f_id(r2 ) ∧ f_state(r1) = Reserved ∧ f_state(r2)= Reserved ⇒ f_endtime(r1) < f_starttime(r2)∨  f_endtime(r2) < f_starttime(r1)
+
+events
+  event INITIALISATION
+    then
+      @init1 users ≔ {k_root}
+      @init2 user_role ≔ {k_root ↦ Admin}
+      @init3 rooms ≔ ∅
+      @init4 reservations ≔ ∅
+  end
+
+  event add_user
+    any caller new_user role
+    where
+      @grd1 caller ∈ users ∧ user_role(caller) = Admin
+      @grd2 new_user ∈ USERS ∖ users
+      @grd3 role ∈ ROLES
+    then
+      @act1 users ≔ users ∪ {new_user}
+      @act2 user_role(new_user) ≔ role
+  end
+
+  event add_room
+    any caller new_room
+    where
+      @grd1 caller ∈ dom(user_role ▷ {Admin})
+      @grd2 new_room ∈ ROOMS ∖ rooms
+    then
+      @act1 rooms ≔ rooms ∪ {new_room}
+  end
+
+  event create_reservation
+  	any user new_reservation rid room start_time end_time
+  	where
+  	  @grd1 user ∈ users
+  	  @grd2 new_reservation ∈ RESERVATIONS
+  	  @grd3 f_id(new_reservation) = rid
+  	  @grd4 f_room(new_reservation) = room
+  	  @grd5 f_starttime(new_reservation) = start_time
+  	  @grd6 f_endtime(new_reservation) = end_time
+  	  @grd7 f_state(new_reservation) = Requested
+  	  @grd8 start_time < end_time
+  	  @grd9 ∀r· r ∈ reservations ⇒  f_id(r) ≠  rid // not allow to same rid
+  	then
+  	  @act1 reservations ≔ reservations ∪ {new_reservation}
+  end
+
+  event accept_reservation
+    any caller reservation new_reservation
+    where
+      @grd1 caller ∈ users ∧ user_role(caller) = Director
+      @grd2 reservation ∈ reservations ∧ f_state(reservation) = Requested
+      @grd8 new_reservation ∈ RESERVATIONS
+      @grd3 f_id(new_reservation) = f_id(reservation)
+  	  @grd4 f_room(new_reservation) = f_room(reservation)
+  	  @grd5 f_starttime(new_reservation) = f_starttime(reservation)
+  	  @grd6 f_endtime(new_reservation) = f_endtime(reservation)
+  	  @grd7 f_state(new_reservation) = Accepted
+    then
+      @act1 reservations ≔ (reservations ∖ {reservation}) ∪ {new_reservation}
+  end
+
+  event decline_reservation
+	any caller reservation new_reservation
+	where
+	  @grd1 caller ∈ users ∧ user_role(caller) = Director
+      @grd2 reservation ∈ reservations ∧ f_state(reservation) = Requested
+      @grd8 new_reservation ∈ RESERVATIONS
+	  @grd3 f_id(new_reservation) = f_id(reservation)
+	  @grd4 f_room(new_reservation) = f_room(reservation)
+	  @grd5 f_starttime(new_reservation) = f_starttime(reservation)
+	  @grd6 f_endtime(new_reservation) = f_endtime(reservation)
+	  @grd7 f_state(new_reservation) = Declined
+	then
+	  @act1 reservations ≔ (reservations ∖ {reservation}) ∪ {new_reservation}
+  end
+
+  event reserve
+	any caller reservation new_reservation
+	where
+	  @grd1 caller ∈ users ∧ user_role(caller) = Secretary
+      @grd2 reservation ∈ reservations ∧ f_state(reservation) = Accepted
+      @grd8 new_reservation ∈ RESERVATIONS
+	  @grd3 f_id(new_reservation) = f_id(reservation)
+	  @grd4 f_room(new_reservation) = f_room(reservation)
+	  @grd5 f_starttime(new_reservation) = f_starttime(reservation)
+	  @grd6 f_endtime(new_reservation) = f_endtime(reservation)
+	  @grd7 f_state(new_reservation) = Reserved
+	  // check available
+	  @grd9 ∀r·r ∈ reservations ∧ f_id(r) ≠  f_id(reservation) ∧ f_state(r) = Reserved ⇒
+	  (f_starttime(r) > f_starttime(reservation) ∨ f_endtime(r) < f_endtime(reservation))
+	then
+	  @act1 reservations ≔ (reservations ∖ {reservation}) ∪ {new_reservation}
+  end
+
+  event deny
+	any caller reservation new_reservation
+	where
+	  @grd1 caller ∈ users ∧ user_role(caller) = Secretary
+      @grd2 reservation ∈ reservations ∧ f_state(reservation) = Accepted
+      @grd8 new_reservation ∈ RESERVATIONS
+	  @grd3 f_id(new_reservation) = f_id(reservation)
+	  @grd4 f_room(new_reservation) = f_room(reservation)
+	  @grd5 f_starttime(new_reservation) = f_starttime(reservation)
+	  @grd6 f_endtime(new_reservation) = f_endtime(reservation)
+	  @grd7 f_state(new_reservation) = Denied
+	then
+	  @act1 reservations ≔ (reservations ∖ {reservation}) ∪ {new_reservation}
+  end
+end

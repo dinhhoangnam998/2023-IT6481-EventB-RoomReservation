@@ -1,0 +1,17 @@
+context ctx0
+
+sets USERS ROLES ROOMS STATES
+
+constants k_root Admin Director Secretary Staff
+          Requested Accepted Declined Reserved Denied
+
+
+axioms
+  @axm1 finite(ROOMS)
+  @axm2 finite(USERS)
+
+  @axm3 k_root ∈ USERS
+  @axm4 partition(ROLES, {Admin}, {Director}, {Secretary}, {Staff})
+  @axm5 partition(STATES, {Requested}, {Accepted}, {Declined}, {Reserved}, {Denied})
+
+end

@@ -1,0 +1,5 @@
+context ctx1
+  constants k_current_timestamp
+  axioms
+    @axmr1 k_current_timestamp ∈ ℕ1
+end

@@ -1,0 +1,49 @@
+machine m1 refines m0 sees ctx0 ctx1
+variables users user_role rooms rids f_room f_starttime f_endtime f_state inactive_rooms
+
+invariants
+  @invr1 inactive_rooms ⊆ rooms
+  @invr2 ∀rid · rid∈rids ∧ f_state(rid)=Reserved
+         ∧ f_starttime(rid) < k_current_timestamp ∧ f_endtime(rid) > k_current_timestamp
+         ⇒ f_room(rid) ∉ inactive_rooms
+
+events
+  event INITIALISATION extends INITIALISATION
+    then
+      @initr1 inactive_rooms ≔ ∅
+  end
+
+  event deactive_room
+    any caller room
+    where
+      @grd1 caller ∈ dom(user_role ▷ {Admin})
+      @grd2 room ∈ rooms
+      @grd3 room ∉ inactive_rooms
+      @grd4 ∀rid·rid ∈ rids ∧ f_state(rid) = Reserved
+            ∧ f_starttime(rid) < k_current_timestamp ∧ f_endtime(rid) > k_current_timestamp
+            ⇒ f_room(rid) ≠  room
+    then
+     @act1 inactive_rooms ≔ inactive_rooms ∪ {room}
+  end
+
+  event active_room
+    any caller room
+    where
+      @grd1 caller ∈ dom(user_role ▷ {Admin})
+      @grd2 room ∈ inactive_rooms
+    then
+      @act1 inactive_rooms ≔ inactive_rooms ∖ {room}
+  end
+
+  event create_reservation extends create_reservation
+    where
+      @grdr1 room ∉  inactive_rooms
+  end
+
+  event reserve extends reserve
+    where
+    @grdr1 f_room(rid) ∉ inactive_rooms
+      // @grdr1 f_starttime(rid) < k_current_timestamp ∧ f_endtime(rid) > k_current_timestamp ⇒ f_room(rid) ∉ inactive_rooms
+  end
+
+end

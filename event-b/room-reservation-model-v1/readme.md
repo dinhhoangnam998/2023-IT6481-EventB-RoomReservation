@@ -1,0 +1,1 @@
+Để mô hình hoá kiểu dữ liệu Record, phiên bản này sử dụng hướng tiếp cận tham khảo tại: https://wiki.event-b.org/index.php/Structured_Types
